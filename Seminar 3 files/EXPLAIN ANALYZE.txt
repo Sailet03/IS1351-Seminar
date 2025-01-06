@@ -1,0 +1,26 @@
+EXPLAIN ANALYZE
+SELECT
+        TO_CHAR(date, 'Month') AS "Month",
+        COUNT(CASE WHEN induvidualLessonId IS NOT NULL OR groupLessonId IS NOT NULL OR ensambleId IS NOT NULL THEN 1 END) AS "Total",
+        COUNT(CASE WHEN induvidualLessonId IS NOT NULL THEN 1 END) AS "Induvidual",
+        COUNT(CASE WHEN groupLessonId IS NOT NULL THEN 1 END) AS "Group",
+        COUNT(CASE WHEN ensambleId IS NOT NULL THEN 1 END) AS "Ensamble"
+FROM Booking
+WHERE EXTRACT(YEAR FROM date) = 2023
+GROUP BY TO_CHAR(date, 'Month'), DATE_PART('Month', date)
+ORDER BY DATE_PART('Month', date);
+
+
+                                                  QUERY PLAN                                                   
+---------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=30.53..30.76 rows=7 width=72) (actual time=0.228..0.236 rows=3 loops=1)
+   Group Key: (date_part('Month'::text, date)), (to_char(date, 'Month'::text))
+   ->  Sort  (cost=30.53..30.55 rows=7 width=52) (actual time=0.207..0.209 rows=7 loops=1)
+         Sort Key: (date_part('Month'::text, date)), (to_char(date, 'Month'::text))
+         Sort Method: quicksort  Memory: 25kB
+         ->  Seq Scan on booking  (cost=0.00..30.43 rows=7 width=52) (actual time=0.153..0.168 rows=7 loops=1)
+               Filter: (EXTRACT(year FROM date) = '2023'::numeric)
+               Rows Removed by Filter: 8
+ Planning Time: 0.285 ms
+ Execution Time: 0.332 ms
+(10 rows)
