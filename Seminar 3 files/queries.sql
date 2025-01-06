@@ -47,8 +47,7 @@ FROM (
 INNER JOIN Teacher ON combined.id = Teacher.teacherId
 WHERE EXTRACT(YEAR FROM date) = 2023 AND EXTRACT(MONTH FROM date) = 6 
 GROUP BY combined.id , Teacher.name
-HAVING COUNT(*) > 3
-ORDER BY combined.id;
+ORDER BY COUNT(*);
 
 
 
